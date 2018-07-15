@@ -33,7 +33,6 @@ public class Query {
         String jsonResponse;
         HttpURLConnection urlConnection = null;
         InputStream inputStream = null;
-        Log.e("HTTP", "makeHttpRequest: Here");
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -41,7 +40,6 @@ public class Query {
             urlConnection.setConnectTimeout(15000 /* milliseconds */);
             urlConnection.connect();
             inputStream = urlConnection.getInputStream();
-            Log.e("HTTP Request", "makeHttpRequest: Success");
             jsonResponse = readFromStream(inputStream);
         } catch (IOException e) {
             return null;
@@ -84,7 +82,6 @@ public class Query {
     private static ArrayList<News> extractFeatureFromJson(JSONObject response) {
         ArrayList<News> newsList = new ArrayList<>();
         try {
-            Log.e("json", "makeHttpRequest: Success2");
             JSONObject responseObject = response.getJSONObject("response");
 
             if (responseObject != null) {
@@ -94,9 +91,9 @@ public class Query {
                     JSONObject news = results.getJSONObject(i);
                     String title = news.getString("webTitle");
                     String link = news.getString("webUrl");
-                    newsList.add(new News(title, link));
+                    String date = news.getString("webPublicationDate");
+                    newsList.add(new News(title, link, date));
                 }
-                Log.e("json", "makeHttpRequest: Success3");
 
             }
         } catch (JSONException e) {

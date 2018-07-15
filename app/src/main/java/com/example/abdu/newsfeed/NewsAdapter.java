@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 public class NewsAdapter extends ArrayAdapter<News> {
@@ -28,6 +31,9 @@ public class NewsAdapter extends ArrayAdapter<News> {
         titleTextView.setText(item.getTitle());
         TextView detailsTextView = listItemView.findViewById(R.id.link);
         detailsTextView.setText(item.getUrl());
+
+        TextView date = listItemView.findViewById(R.id.date);
+        date.setText(item.getDate());
 
         return listItemView;
     }

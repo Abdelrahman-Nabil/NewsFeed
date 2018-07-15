@@ -2,14 +2,20 @@ package com.example.abdu.newsfeed;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,7 +26,7 @@ import java.util.List;
 
 
 public class SportFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
-    private static final String _URL = "https://content.guardianapis.com/search?q=sports&api-key=d15e11ef-a19c-4ee9-9a72-26aba536ec62";
+    private static final String _URL = "https://content.guardianapis.com/search?";
     private TextView emptyView;
     private NewsAdapter adapter;
 
@@ -65,8 +71,26 @@ public class SportFragment extends Fragment implements LoaderManager.LoaderCallb
 
     @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
-        return new NewsLoader(getContext(), _URL);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+
+        String date = sharedPrefs.getString(
+                getString(R.string.from),
+                getString(R.string.Default));
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // Append query parameter and its value. For example, the `format=geojson`
+        uriBuilder.appendQueryParameter("q", "sport");
+        uriBuilder.appendQueryParameter("from-date", date);
+        uriBuilder.appendQueryParameter("api-key", "d15e11ef-a19c-4ee9-9a72-26aba536ec62");
+        Log.e("Games", "games URL: " + uriBuilder.toString());
+        return new NewsLoader(getContext(), uriBuilder.toString());
     }
+
 
     @Override
     public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
